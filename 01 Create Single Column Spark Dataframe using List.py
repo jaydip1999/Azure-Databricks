@@ -11,7 +11,7 @@ help(spark.createDataFrame)
 
 # COMMAND ----------
 
-spark.createDataFrame(ages_list,)
+spark.createDataFrame(ages_list)
 
 # COMMAND ----------
 
