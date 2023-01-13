@@ -404,4 +404,269 @@ users_schema='''
 
 # COMMAND ----------
 
+help(spark.createDataFrame)
+
+# COMMAND ----------
+
+spark.createDataFrame(users,schema=users_schema)
+
+# COMMAND ----------
+
+spark.createDataFrame(users,schema=users_schema).show()
+
+# COMMAND ----------
+
+users_schema=[
+    'id',
+    'first_name',
+    'last_name',
+    'email',
+    'is_customer' ,
+    'amount_paid' ,
+    'customer_from',
+    'last_updated_ts' 
+]
+
+# COMMAND ----------
+
+spark.createDataFrame(users,schema=users_schema)
+
+# COMMAND ----------
+
+spark.createDataFrame(users,schema=users_schema).show()
+
+# COMMAND ----------
+
+from pyspark.sql.types import *
+
+# COMMAND ----------
+
+users_schema=StructType(
+[StructField('id',IntegerType()),
+StructField('first_name',StringType()),
+StructField('last_name',StringType()),
+StructField('email',StringType()),
+ StructField('is_customer',BooleanType()),
+StructField('amount_paid',FloatType()),
+ StructField('customer_from',DateType()),
+StructField('last_updated_ts',TimestampType())])
+
+# COMMAND ----------
+
+spark.createDataFrame(users,schema=users_schema)
+
+# COMMAND ----------
+
+type(users_schema)
+
+# COMMAND ----------
+
+spark.createDataFrame(users,schema=users_schema).show()
+
+# COMMAND ----------
+
+import datetime
+users=[
+    {
+      'id' :1,
+        'first_name':'Jaydip',
+        'last_name':'Dobariya',
+        'email':'dobariyajaydip@gmail.com',
+        'is_customer':True,
+        'amount_paid':1000.55,
+        'customer_from':datetime.date(2021,1,15),
+        'last_updated_is':datetime.datetime(2021,2,10,1,15,0)
+    },
+    {
+      'id' :2,
+        'first_name':'Vishal',
+        'last_name':'Barvaliya',
+        'email':'vishalbarvaliya@gmail.com',
+        'is_customer':True,
+        'amount_paid':900.55,
+        'customer_from':datetime.date(2021,2,14),
+        'last_updated_is':datetime.datetime(2021,2,18,4,33,0)
+    },
+    {
+      'id' :3,
+        'first_name':'Bhavik',
+        'last_name':'Gajera',
+        'email':'bhavikgajera@gmail.com',
+        'amount_paid':None,
+        'last_updated_is':datetime.datetime(2021,4,2,0,0,55,18)
+    }
+]
+
+# COMMAND ----------
+
+users_df=spark.createDataFrame([Row(**user) for user in users])
+
+# COMMAND ----------
+
+users_df.show()
+
+# COMMAND ----------
+
+import pandas as pd
+
+# COMMAND ----------
+
+pd.DataFrame(users)
+
+# COMMAND ----------
+
+spark.createDataFrame(pd.DataFrame(users)).show()
+
+# COMMAND ----------
+
+spark.createDataFrame(pd.DataFrame(users)).printSchema()
+
+# COMMAND ----------
+
+import datetime
+users=[
+    {
+      'id' :1,
+        'first_name':'Jaydip',
+        'last_name':'Dobariya',
+        'email':'dobariyajaydip@gmail.com',
+        'phone_no':['93427382623','93427382623'],
+        'is_customer':True,
+        'amount_paid':1000.55,
+        'customer_from':datetime.date(2021,1,15),
+        'last_updated_is':datetime.datetime(2021,2,10,1,15,0)
+    },
+    {
+      'id' :2,
+        'first_name':'Vishal',
+        'last_name':'Barvaliya',
+        'email':'vishalbarvaliya@gmail.com',
+        'phone_no':['93427382623','93427382623'],
+        'is_customer':True,
+        'amount_paid':900.55,
+        'customer_from':datetime.date(2021,2,14),
+        'last_updated_is':datetime.datetime(2021,2,18,4,33,0)
+    },
+    {
+      'id' :3,
+        'first_name':'Bhavik',
+        'last_name':'Gajera',
+        'email':'bhavikgajera@gmail.com',
+        'phone_no':None,
+        'is_customer':False,
+        'amount_paid':None,
+        'customer_from':None,
+        'last_updated_is':datetime.datetime(2021,4,2,0,0,55,18)
+    }
+]
+
+# COMMAND ----------
+
+users_df=spark.createDataFrame([Row(**user) for user in users])
+
+# COMMAND ----------
+
+users_df.show()
+
+# COMMAND ----------
+
+users_df.select('id','phone_no').show(truncate=False)
+
+# COMMAND ----------
+
+users_df.columns
+
+# COMMAND ----------
+
+users_df.dtypes
+
+# COMMAND ----------
+
+from pyspark.sql.functions import explode
+
+# COMMAND ----------
+
+users_df.withColumn('phone',explode('phone_no')).drop('phone_no').show()
+
+# COMMAND ----------
+
+from pyspark.sql.functions import col
+
+# COMMAND ----------
+
+users_df.select('id',col('phone_no')[0].alias('mobile'),col('phone_no')[1].alias('home')).show()
+
+# COMMAND ----------
+
+from pyspark.sql.functions import explode_outer
+
+# COMMAND ----------
+
+users_df.withColumn('phone',explode_outer('phone_no')).drop('phone_no').show()
+
+# COMMAND ----------
+
+import datetime
+users=[
+    {
+      'id' :1,
+        'first_name':'Jaydip',
+        'last_name':'Dobariya',
+        'email':'dobariyajaydip@gmail.com',
+        'phone_no':{'mobile':'93427382623','home':'93427382623'},
+        'is_customer':True,
+        'amount_paid':1000.55,
+        'customer_from':datetime.date(2021,1,15),
+        'last_updated_is':datetime.datetime(2021,2,10,1,15,0)
+    },
+    {
+      'id' :2,
+        'first_name':'Vishal',
+        'last_name':'Barvaliya',
+        'email':'vishalbarvaliya@gmail.com',
+        'phone_no':{'mobile':'93427382623','home':'93427382623'} ,
+        'is_customer':True,
+        'amount_paid':900.55,
+        'customer_from':datetime.date(2021,2,14),
+        'last_updated_is':datetime.datetime(2021,2,18,4,33,0)
+    },
+    {
+      'id' :3,
+        'first_name':'Bhavik',
+        'last_name':'Gajera',
+        'email':'bhavikgajera@gmail.com',
+        'phone_no':None,
+        'is_customer':False,
+        'amount_paid':None,
+        'customer_from':None,
+        'last_updated_is':datetime.datetime(2021,4,2,0,0,55,18)
+    }
+]
+
+# COMMAND ----------
+
+users_df=spark.createDataFrame([Row(**user) for user in users])
+
+# COMMAND ----------
+
+users_df.printSchema()
+
+# COMMAND ----------
+
+users_df.show()
+
+# COMMAND ----------
+
+users_df.select('id','phone_no').show(truncate=False)
+
+# COMMAND ----------
+
+users_df.columns
+
+# COMMAND ----------
+
+users_df.dtypes
+
+# COMMAND ----------
+
 
