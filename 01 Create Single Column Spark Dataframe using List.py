@@ -228,3 +228,180 @@ spark.createDataFrame(users_list)
 
 from pyspark.sql import Row
 users_rows=[Row(**user) for user in users_list]
+
+# COMMAND ----------
+
+user_details=users_list[1]
+
+# COMMAND ----------
+
+user_details
+
+# COMMAND ----------
+
+Row(*user_details.values())
+
+# COMMAND ----------
+
+users_rows=[Row(*user.values()) for user in users_list]
+
+# COMMAND ----------
+
+users_rows
+
+# COMMAND ----------
+
+spark.createDataFrame(users_rows,'user_id int,user_first_name string')
+
+# COMMAND ----------
+
+users_rows=[Row(**user) for user in users_list]
+
+# COMMAND ----------
+
+users_rows
+
+# COMMAND ----------
+
+spark.createDataFrame(users_rows)
+
+# COMMAND ----------
+
+def dummy(**kwargs):
+    print(kwargs)
+    print(len(kwargs))
+
+# COMMAND ----------
+
+users_details={'user_id':1,'user_first_name':'Jaydip'}
+
+
+# COMMAND ----------
+
+dummy(users_details=users_details)
+
+# COMMAND ----------
+
+dummy(user_id= 1, user_first_name= 'Jaydip')
+
+# COMMAND ----------
+
+dummy(**users_details)
+
+# COMMAND ----------
+
+import datetime
+users=[
+    {
+      'id' :1,
+        'first_name':'Jaydip',
+        'last_name':'Dobariya',
+        'email':'dobariyajaydip@gmail.com',
+        'is_customer':True,
+        'amount_paid':1000.55,
+        'customer_from':datetime.date(2021,1,15),
+        'last_updated_is':datetime.datetime(2021,2,10,1,15,0)
+    },
+    {
+      'id' :2,
+        'first_name':'Vishal',
+        'last_name':'Barvaliya',
+        'email':'vishalbarvaliya@gmail.com',
+        'is_customer':True,
+        'amount_paid':900.55,
+        'customer_from':datetime.date(2021,2,14),
+        'last_updated_is':datetime.datetime(2021,2,18,4,33,0)
+    },
+    {
+      'id' :3,
+        'first_name':'Bhavik',
+        'last_name':'Gajera',
+        'email':'bhavikgajera@gmail.com',
+        'is_customer':False,
+        'amount_paid':None,
+        'customer_from':None,
+        'last_updated_is':datetime.datetime(2021,4,2,0,0,55,18)
+    }
+]
+
+# COMMAND ----------
+
+from pyspark.sql import Row
+
+
+# COMMAND ----------
+
+users_df=spark.createDataFrame([Row(**user) for user in users])
+
+# COMMAND ----------
+
+users_df.printSchema()
+
+# COMMAND ----------
+
+users_df.show()
+
+# COMMAND ----------
+
+users_df.columns
+
+# COMMAND ----------
+
+users_df.dtypes
+
+# COMMAND ----------
+
+users_df
+
+# COMMAND ----------
+
+import datetime
+users=[
+    (
+      1,
+        'Jaydip',
+        'Dobariya',
+       'dobariyajaydip@gmail.com',
+        True,
+        1000.55,
+        datetime.date(2021,1,15),
+        datetime.datetime(2021,2,10,1,15,0)
+    ),
+    (
+      2,
+        'Vishal',
+        'Barvaliya',
+        'vishalbarvaliya@gmail.com',
+        True,
+        900.55,
+        datetime.date(2021,2,14),
+        datetime.datetime(2021,2,18,4,33,0)
+    ),
+    (
+      3,
+        'Bhavik',
+        'Gajera',
+        'bhavikgajera@gmail.com',
+        False,
+        None,
+        None,
+        datetime.datetime(2021,4,2,0,0,55,18)
+        )
+]
+
+# COMMAND ----------
+
+users_schema='''
+    id int,
+    first_name string,
+    last_name string,
+    email string,
+    is_customer boolean,
+    amount_paid float,
+    customer_from date,
+    last_updated_ts timestamp
+'''
+
+# COMMAND ----------
+
+
