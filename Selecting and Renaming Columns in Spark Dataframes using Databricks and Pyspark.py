@@ -232,4 +232,36 @@ users_df.select('id','first_name','last_name').show()
 
 # COMMAND ----------
 
+l=['id','first_name','last_name']
+users_df.select(*l).show()
+
+# COMMAND ----------
+
+help(col)
+
+# COMMAND ----------
+
+user_id=col('id')
+
+# COMMAND ----------
+
+user_id
+
+# COMMAND ----------
+
+users_df.select(user_id),show()
+
+# COMMAND ----------
+
+from pyspark.sql.functions import date_format
+users_df.select(
+col('id'),date_format('customer_from','yyyyMMdd').cast('int').alias('customer_from')
+).show()
+
+# COMMAND ----------
+
+cols=[col('id').date_format('customer_from','yyyyMMdd').cast('int').alias('customer_from')]
+
+# COMMAND ----------
+
 
