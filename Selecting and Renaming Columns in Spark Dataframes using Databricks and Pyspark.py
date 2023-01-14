@@ -285,4 +285,133 @@ col('id'),date_format('customer_from','yyyyMMdd').cast('int').alias('customer_fr
 # COMMAND ----------
 
 cols=[col('id'),date_format('customer_from','yyyyMMdd').cast('int').alias('customer_from')] #list of column-type objects
-users_df.sele()
+users_df.select(*cols).show()
+
+# COMMAND ----------
+
+#Invoking Functions using Spark Column Objects
+
+# COMMAND ----------
+
+from pyspark.sql.functions import lit,concat
+
+# COMMAND ----------
+
+users_df.select('id','first_name','last_name',concat(col('first_name'),lit(', '),col('last_name')).alias('full_name')).show()
+
+# COMMAND ----------
+
+
+
+# COMMAND ----------
+
+users_df.selectExpr('id','first_name','last_name',"concat(first_name,', ',last_name) as full_name").show()
+
+# COMMAND ----------
+
+#understandong lit function in Spark
+
+# COMMAND ----------
+
+users_df.createOrReplaceTempView('users')
+
+# COMMAND ----------
+
+spark.sql("""
+        select id,amount_paid+25 as amount_paid from users
+""").show()
+
+# COMMAND ----------
+
+users_df.selectExpr('id','amount_paid+25 as amount_paid').show()
+
+# COMMAND ----------
+
+users_df.select('id','amount_paid'+'25').show()
+
+# COMMAND ----------
+
+users_df.select('i'+'d',col('amount_paid')+lit(25)).show()
+
+# COMMAND ----------
+
+lit(25)
+
+# COMMAND ----------
+
+#Overview of Renaming Spark Dataframe Columns or Expressions
+
+# COMMAND ----------
+
+#Naming derived columns using withColumn
+
+# COMMAND ----------
+
+users_df.show()
+
+# COMMAND ----------
+
+users_df.select('id','first_name','last_name',concat('first_name',lit(', '),'last_name').alias('full_name')).show()
+
+# COMMAND ----------
+
+users_df.select('id','first_name','last_name').withColumn('full_name',concat('first_name',lit(', '),'last_name')).show()
+
+# COMMAND ----------
+
+help(users_df.withColumn)
+
+# COMMAND ----------
+
+users_df.select('id','first_name','last_name').withColumn('fn','full_name').show()#second argument should be function which returns column type object
+
+# COMMAND ----------
+
+users_df.select('id','courses').show()
+
+# COMMAND ----------
+
+from pyspark.sql.functions import size
+
+# COMMAND ----------
+
+users_df.select('id','courses').withColumn('course_count',size('courses')).show()
+
+# COMMAND ----------
+
+#Renaming columns using withColumnRenamed
+
+# COMMAND ----------
+
+help(users_df.withColumnRenamed)
+
+# COMMAND ----------
+
+users_df.select(col('id').alias('user_id'),'first_name','last_name').show()#alias only works with column type object
+
+# COMMAND ----------
+
+users_df.select('id','first_name','last_name').\
+withColumnRenamed('id','user_id').\
+withColumnRenamed('first_name','user_first_name').\
+withColumnRenamed('last_name','user_last_name').\
+show()
+
+# COMMAND ----------
+
+#Renaming Spark Dataframe columns or expressions using alias function
+
+
+# COMMAND ----------
+
+users_df.select(col('id').alias('user_id'),col('first_name').alias('user_first_name'),col('last_name').alias('user_last_name')).show()
+
+# COMMAND ----------
+
+users_df.select(users_df['id'].alias('user_id'),users_df['first_name'].alias('user_first_name'),users_df['last_name'].alias('user_last_name')).\
+withColumn('user_full_name',concat(col('user_first_name'),lit(','),col('user_last_name'))).\
+show()
+
+# COMMAND ----------
+
+
