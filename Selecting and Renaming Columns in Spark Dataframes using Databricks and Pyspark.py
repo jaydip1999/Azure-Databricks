@@ -241,6 +241,10 @@ help(col)
 
 # COMMAND ----------
 
+from pyspark.sql.functions import col
+
+# COMMAND ----------
+
 user_id=col('id')
 
 # COMMAND ----------
@@ -249,7 +253,21 @@ user_id
 
 # COMMAND ----------
 
-users_df.select(user_id),show()
+users_df.select(user_id).show()
+
+# COMMAND ----------
+
+users_df.select('id','customer_from').show()
+
+# COMMAND ----------
+
+users_df.select('id','customer_from').dtypes
+
+# COMMAND ----------
+
+users_df.select(
+col('id'),date_format('customer_from','yyyyMMdd').alias('customer_from')
+).printSchema()
 
 # COMMAND ----------
 
@@ -260,8 +278,11 @@ col('id'),date_format('customer_from','yyyyMMdd').cast('int').alias('customer_fr
 
 # COMMAND ----------
 
-cols=[col('id').date_format('customer_from','yyyyMMdd').cast('int').alias('customer_from')]
+users_df.select(
+col('id'),date_format('customer_from','yyyyMMdd').cast('int').alias('customer_from')
+).printSchema()
 
 # COMMAND ----------
 
-
+cols=[col('id'),date_format('customer_from','yyyyMMdd').cast('int').alias('customer_from')] #list of column-type objects
+users_df.sele()
