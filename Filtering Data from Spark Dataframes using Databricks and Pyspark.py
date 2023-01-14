@@ -44,7 +44,7 @@ users=[
         'last_name':'Gajera',
         'email':'bhavikgajera@gmail.com',
         'gender':'Female',
-        'city':'Brampton',
+        'city':None,
         'phone_no':Row(mobile=None,home=None),
         'courses':[],
         'is_customer':False,
@@ -180,8 +180,150 @@ spark.sql(""" select * from users where is_customer = 'true' """).show()
 
 # COMMAND ----------
 
-users_df.filter(col('city')=='Dallas').show()
+users_df.filter("city=='Toronto'").show()
 
 # COMMAND ----------
 
-users_df.filter('city=='Dallas'').show()
+from pyspark.sql.functions import col,lit,concat
+users_df.filter(col('city')=='Toronto').show()
+
+# COMMAND ----------
+
+#fetching customers who paid 900.55
+
+# COMMAND ----------
+
+users_df.filter(col('amount_paid')==900.55).show()
+
+# COMMAND ----------
+
+users_df.filter(col('amount_paid')=='900.55').show()
+
+# COMMAND ----------
+
+users_df.filter("amount_paid =='900.55'").show()
+
+# COMMAND ----------
+
+users_df.filter("amount_paid = 900.55 ").show()
+
+# COMMAND ----------
+
+#fetching customers  where paid amount is not a number
+
+# COMMAND ----------
+
+from pyspark.sql.functions import isnan
+
+# COMMAND ----------
+
+users_df.select('amount_paid',isnan('amount_paid')).show()
+
+# COMMAND ----------
+
+users_df.filter(isnan('amount_paid')==True).show()
+
+# COMMAND ----------
+
+#Filter using Not Equal Condition
+
+# COMMAND ----------
+
+#fetching users who are not living in Toronto city
+
+# COMMAND ----------
+
+users_df.select('id','city').show()
+
+# COMMAND ----------
+
+users_df.select('id','city').filter(col('city')!='Toronto').show()
+
+# COMMAND ----------
+
+users_df.select('id','city').filter((col('city')!='Toronto') | (col('city').isNull())).show()
+
+# COMMAND ----------
+
+users_df.select('id','city').filter((col('city')!='')).show()
+
+# COMMAND ----------
+
+#Filter using Between operator
+
+# COMMAND ----------
+
+#fetching user_id and email whose last updated timestamp is between 2021 feb 15th and 2021 march 15th
+
+# COMMAND ----------
+
+users_df.select('id','email','last_updated_is').filter(col('last_updated_is').between('2021-02-15 00:00:00','2021-03-15 23:59:59')).show()
+
+# COMMAND ----------
+
+#fetching users whose payment is in the range of 850 and 900.
+
+# COMMAND ----------
+
+users_df.select('id','amount_paid').show()
+
+# COMMAND ----------
+
+users_df.select('id','amount_paid').filter(col('amount_paid').between(900,1100)).show()
+
+# COMMAND ----------
+
+#Dealing with Null values While Filtering
+
+
+# COMMAND ----------
+
+#fetching users whose city is not null
+
+# COMMAND ----------
+
+users_df.select('id','city').show()
+
+# COMMAND ----------
+
+users_df.select('id','city').filter(col('city').isNotNull()).show()
+
+# COMMAND ----------
+
+users_df.select('id','city').filter("city is not null").show()
+
+# COMMAND ----------
+
+#fetching users whose city is null
+
+# COMMAND ----------
+
+users_df.select('id','city').filter(col('city').isNull()).show()
+
+# COMMAND ----------
+
+users_df.select('id','city').filter("city is null").show()
+
+# COMMAND ----------
+
+#fetching users whose customer_from is null
+
+# COMMAND ----------
+
+users_df.select('id','customer_from').show()
+
+# COMMAND ----------
+
+users_df.select('id','city').filter(col('customer_from').isNull()).show()
+
+# COMMAND ----------
+
+users_df.select('id','city').filter("customer_from is null").show()
+
+# COMMAND ----------
+
+#Overview of Boolean Operations
+
+# COMMAND ----------
+
+
