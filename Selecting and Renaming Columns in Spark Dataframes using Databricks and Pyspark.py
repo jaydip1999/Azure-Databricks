@@ -3,6 +3,7 @@
 
 # COMMAND ----------
 
+
 from pyspark.sql import Row
 
 # COMMAND ----------
@@ -371,7 +372,7 @@ users_df.select('id','courses').show()
 
 # COMMAND ----------
 
-from pyspark.sql.functions import size
+from pyspark.sql.functions import size,concat,col,lit
 
 # COMMAND ----------
 
@@ -411,6 +412,53 @@ users_df.select(col('id').alias('user_id'),col('first_name').alias('user_first_n
 users_df.select(users_df['id'].alias('user_id'),users_df['first_name'].alias('user_first_name'),users_df['last_name'].alias('user_last_name')).\
 withColumn('user_full_name',concat(col('user_first_name'),lit(','),col('user_last_name'))).\
 show()
+
+# COMMAND ----------
+
+users_df.withColumn('user_full_name',concat(col('first_name'),lit(','),col('last_name'))).\
+         select(users_df['id'].alias('user_id'),users_df['first_name'].alias('user_first_name'),users_df['last_name'].alias('user_last_name'),'user_full_name').show()
+
+# COMMAND ----------
+
+users_df['first_name']users_df['last_name']
+
+# COMMAND ----------
+
+users_df.withColumn('user_full_name',concat(users_df['first_name'],lit(','),users_df['last_name'])).\
+         select(users_df['id'].alias('user_id'),users_df['first_name'].alias('user_first_name'),users_df['last_name'].alias('user_last_name'),'user_full_name').show()
+
+# COMMAND ----------
+
+#Renaming and Rordering multiple Spark Dataframe Columns
+
+# COMMAND ----------
+
+#needed original columns
+columns1=['id','first_name','last_name','email','phone_no','courses']
+#updated columns
+columns2=['user_id','user_first_name','user_last_name','user_email','user_phone_no','user_courses']
+
+# COMMAND ----------
+
+help(users_df.toDF)
+
+# COMMAND ----------
+
+users_df.select(columns1).show()
+
+# COMMAND ----------
+
+users_df.select(columns1).toDF(*columns2).show()
+
+# COMMAND ----------
+
+def myDF(*cols):
+    print(type(cols))
+    print(cols)
+
+# COMMAND ----------
+
+myDF(*['f1','f2'])
 
 # COMMAND ----------
 
