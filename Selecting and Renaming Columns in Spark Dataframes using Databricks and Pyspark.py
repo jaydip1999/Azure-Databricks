@@ -1,4 +1,8 @@
 # Databricks notebook source
+#Creating Spark Dataframe
+
+# COMMAND ----------
+
 from pyspark.sql import Row
 
 # COMMAND ----------
@@ -62,6 +66,10 @@ users_df.show()
 
 # COMMAND ----------
 
+#Overview of Select on Spark Dataframe
+
+# COMMAND ----------
+
 help(users_df.select)
 
 # COMMAND ----------
@@ -78,6 +86,7 @@ users_df.select(['id','first_name','last_name']).show()
 
 # COMMAND ----------
 
+#defining alias to the dataframe
 users_df.alias('u').select('*').show()
 
 # COMMAND ----------
@@ -106,6 +115,10 @@ users_df.select(col('id'),'first_name','last_name',concat(col('first_name'),lit(
 
 # COMMAND ----------
 
+#Overview of selectExpr on Spark Dataframe
+
+# COMMAND ----------
+
 help(users_df.selectExpr)
 
 # COMMAND ----------
@@ -114,7 +127,108 @@ help(users_df.selectExpr)
 
 # COMMAND ----------
 
+#defining alias
 users_df.alias('u').selectExpr('u.*').show()
+
+# COMMAND ----------
+
+users_df.selectExpr('id','first_name','last_name').show()
+
+# COMMAND ----------
+
+users_df.select(['id','first_name','last_name']).show()
+
+# COMMAND ----------
+
+users_df.select('id','first_name','last_name',concat(col('first_name'),lit(', '),col('last_name')).alias('full_name')).show() 
+
+# COMMAND ----------
+
+#Using selecexpr to use Spark SQL functions
+users_df.selectExpr('id','first_name','last_name',"concat(first_name,', ',last_name) as full_name").show()
+
+# COMMAND ----------
+
+users_df.createOrReplaceTempView('users')
+
+# COMMAND ----------
+
+spark.sql("""
+             select id,first_name,last_name,concat(first_name,',',last_name) as full_name from users 
+"""
+).show()
+
+# COMMAND ----------
+
+#Referring Columns using Spark Dataframe Names  
+
+# COMMAND ----------
+
+users_df['id']
+
+# COMMAND ----------
+
+from pyspark.sql.functions import col
+
+# COMMAND ----------
+
+col('id')
+
+# COMMAND ----------
+
+type(users_df['id'])
+
+# COMMAND ----------
+
+type(col('id'))
+
+# COMMAND ----------
+
+ users_df.select(users_df['id'],col('first_name'),'last_name').show()
+
+# COMMAND ----------
+
+ users_df.alias('a').select(a['id'],col('first_name'),'last_name').show()
+
+# COMMAND ----------
+
+ users_df.alias('a').select(col('id'),col('first_name'),col('last_name')).show()
+
+# COMMAND ----------
+
+ users_df.alias('a').select('a.id',col('first_name'),'last_name').show()
+
+# COMMAND ----------
+
+ users_df.selectExpr('id',col('first_name'),'last_name').show()
+
+# COMMAND ----------
+
+ users_df.selectExpr('id',users_df['first_name'],'last_name').show()
+
+# COMMAND ----------
+
+users_df.select('id','first_name','last_name',concat(users_df['first_name'],lit(', '),col('last_name')).alias('full_name')).show() 
+
+# COMMAND ----------
+
+users_df.alias('a').selectExpr('id','first_name','last_name',"concat(a.first_name,', ',a.last_name) as full_name").show()
+
+# COMMAND ----------
+
+users_df.createOrReplaceTempView('users')
+spark.sql("""
+             select id,first_name,last_name,concat(u.first_name,',',u.last_name) as full_name from users u
+"""
+).show()
+
+# COMMAND ----------
+
+#understanding col function in spark
+
+# COMMAND ----------
+
+users_df.select('id','first_name','last_name').show()
 
 # COMMAND ----------
 
