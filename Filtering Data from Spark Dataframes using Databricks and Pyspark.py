@@ -326,4 +326,16 @@ users_df.select('id','city').filter("customer_from is null").show()
 
 # COMMAND ----------
 
+#Boolean OR on same column of Spark Dataframe and In operator
+
+# COMMAND ----------
+
+from pyspark.sql.functions import col  
+
+# COMMAND ----------
+
+#fetching list of users whose city is null or empty string(users with no cities associated)
+
+# COMMAND ----------
+
 
