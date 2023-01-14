@@ -1,5 +1,5 @@
 # Databricks notebook source
-#Create Single Column Spark Dataframe using List
+#Create Single Column Spark Dataframe using Python List
 
 # COMMAND ----------
 
@@ -47,6 +47,10 @@ spark.createDataFrame(ages_list,StringType())
 
 # COMMAND ----------
 
+#Create Multi Column Spark Dataframe using Python List
+
+# COMMAND ----------
+
 ages_list=[(21,),(23,),(41,),(32,)]
 
 # COMMAND ----------
@@ -72,6 +76,10 @@ spark.createDataFrame(users_list)
 # COMMAND ----------
 
 spark.createDataFrame(users_list,'user_id int, user_first_name string')
+
+# COMMAND ----------
+
+#Overview of Row
 
 # COMMAND ----------
 
@@ -129,6 +137,10 @@ r2.name
 
 
 r2['name']
+
+# COMMAND ----------
+
+#Convert Lists of Lists into Spark Dataframe using Row
 
 # COMMAND ----------
 
@@ -190,6 +202,10 @@ dummy(*user_details)
 
 # COMMAND ----------
 
+##Convert Lists of Tuples into Spark Dataframe using Row
+
+# COMMAND ----------
+
 users_list=[(1,'Jaydip'),(2,'Bhavik'),(3,'Dhaval'),(4,'Vishal')]
 
 # COMMAND ----------
@@ -212,6 +228,10 @@ users_rows
 # COMMAND ----------
 
 spark.createDataFrame(users_rows,'user_id int,user_first_name string')
+
+# COMMAND ----------
+
+#Convert Lists of Dictionaries into Spark Dataframe using Row
 
 # COMMAND ----------
 
@@ -290,6 +310,10 @@ dummy(**users_details)
 
 # COMMAND ----------
 
+#Overview of Basic Data Types in Spark
+
+# COMMAND ----------
+
 import datetime
 users=[
     {
@@ -355,6 +379,10 @@ users_df
 
 # COMMAND ----------
 
+#Specifying Schema as String
+
+# COMMAND ----------
+
 import datetime
 users=[
     (
@@ -416,6 +444,10 @@ spark.createDataFrame(users,schema=users_schema).show()
 
 # COMMAND ----------
 
+#Specifying Schema as for Spark Dataframe using List
+
+# COMMAND ----------
+
 users_schema=[
     'id',
     'first_name',
@@ -434,6 +466,10 @@ spark.createDataFrame(users,schema=users_schema)
 # COMMAND ----------
 
 spark.createDataFrame(users,schema=users_schema).show()
+
+# COMMAND ----------
+
+#Specifying Schema using Spark Types
 
 # COMMAND ----------
 
@@ -462,6 +498,10 @@ type(users_schema)
 # COMMAND ----------
 
 spark.createDataFrame(users,schema=users_schema).show()
+
+# COMMAND ----------
+
+#Create Spark Dataframe using Pandas Dataframe
 
 # COMMAND ----------
 
@@ -520,6 +560,14 @@ spark.createDataFrame(pd.DataFrame(users)).show()
 # COMMAND ----------
 
 spark.createDataFrame(pd.DataFrame(users)).printSchema()
+
+# COMMAND ----------
+
+#Overview of Spark Special Data Types
+
+# COMMAND ----------
+
+#Array Type Columns in Spark Dataframes
 
 # COMMAND ----------
 
@@ -603,6 +651,10 @@ from pyspark.sql.functions import explode_outer
 # COMMAND ----------
 
 users_df.withColumn('phone',explode_outer('phone_no')).drop('phone_no').show()
+
+# COMMAND ----------
+
+#Map Type Columns in Spark Dataframes
 
 # COMMAND ----------
 
@@ -698,6 +750,10 @@ users_df.select('id',explode_outer('phone_no')).show()
 # COMMAND ----------
 
 users_df.select('*',explode('phone_no')).withColumnRenamed('key','phone_type').withColumnRenamed('value','phone_number').drop('phone_no').show()
+
+# COMMAND ----------
+
+#Struct Type Columns in Spark Dataframes
 
 # COMMAND ----------
 

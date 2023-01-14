@@ -11,7 +11,7 @@ users=[
         'last_name':'Dobariya',
         'email':'dobariyajaydip@gmail.com',
         'phone_no':Row(mobile='93427382623',home='93427382623'),
-        'courses':[1,2]
+        'courses':[1,2],
         'is_customer':True,
         'amount_paid':1000.55,
         'customer_from':datetime.date(2021,1,15),
@@ -23,7 +23,7 @@ users=[
         'last_name':'Barvaliya',
         'email':'vishalbarvaliya@gmail.com',
         'phone_no':Row(mobile='93427382623',home='93427382623') ,
-        'courses':[3]
+        'courses':[3],
         'is_customer':True,
         'amount_paid':900.55,
         'customer_from':datetime.date(2021,2,14),
@@ -35,7 +35,7 @@ users=[
         'last_name':'Gajera',
         'email':'bhavikgajera@gmail.com',
         'phone_no':Row(mobile=None,home=None),
-        'courses':[]
+        'courses':[],
         'is_customer':False,
         'amount_paid':None,
         'customer_from':None,
@@ -45,4 +45,77 @@ users=[
 
 # COMMAND ----------
 
-import pandasm as pd
+import pandas as pd
+
+# COMMAND ----------
+
+
+spark.conf.set('spark.sql.execution.arrow.pyspark.enabled',False)
+
+# COMMAND ----------
+
+users_df=spark.createDataFrame(pd.DataFrame(users))
+
+# COMMAND ----------
+
+users_df.show()
+
+# COMMAND ----------
+
+help(users_df.select)
+
+# COMMAND ----------
+
+users_df.select('*').show()
+
+# COMMAND ----------
+
+users_df.select('id','first_name','last_name').show()
+
+# COMMAND ----------
+
+users_df.select(['id','first_name','last_name']).show()
+
+# COMMAND ----------
+
+users_df.alias('u').select('*').show()
+
+# COMMAND ----------
+
+users_df.alias('u').select('u.*').show()
+
+# COMMAND ----------
+
+users_df.alias('u').select('u.id','u.first_name','u.last_name').show()
+
+# COMMAND ----------
+
+from pyspark.sql.functions import col
+
+# COMMAND ----------
+
+users_df.select(col('id'),'first_name','last_name').show()
+
+# COMMAND ----------
+
+from pyspark.sql.functions import col,concat,lit
+
+# COMMAND ----------
+
+users_df.select(col('id'),'first_name','last_name',concat(col('first_name'),lit(', '),col('last_name')).alias('full_name')).show()
+
+# COMMAND ----------
+
+help(users_df.selectExpr)
+
+# COMMAND ----------
+
+  users_df.selectExpr('*').show()
+
+# COMMAND ----------
+
+users_df.alias('u').selectExpr('u.*').show()
+
+# COMMAND ----------
+
+
