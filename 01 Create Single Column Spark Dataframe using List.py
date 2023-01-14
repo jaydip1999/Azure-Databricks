@@ -669,4 +669,107 @@ users_df.dtypes
 
 # COMMAND ----------
 
+from pyspark.sql.functions import explode
+
+# COMMAND ----------
+
+from pyspark.sql.functions import col
+
+# COMMAND ----------
+
+users_df.select('id',col('phone_no')['mobile'].alias('mobile number')).show()
+
+# COMMAND ----------
+
+users_df.select('id',col('phone_no')['mobile'].alias('mobile number'),col('phone_no')['home'].alias('home number')).show()
+
+# COMMAND ----------
+
+users_df.select('id',explode('phone_no')).show()
+
+# COMMAND ----------
+
+from pyspark.sql.functions import explode_outer
+
+# COMMAND ----------
+
+users_df.select('id',explode_outer('phone_no')).show()
+
+# COMMAND ----------
+
+users_df.select('*',explode('phone_no')).withColumnRenamed('key','phone_type').withColumnRenamed('value','phone_number').drop('phone_no').show()
+
+# COMMAND ----------
+
+import datetime
+users=[
+    {
+      'id' :1,
+        'first_name':'Jaydip',
+        'last_name':'Dobariya',
+        'email':'dobariyajaydip@gmail.com',
+        'phone_no':Row(mobile='93427382623',home='93427382623'),
+        'is_customer':True,
+        'amount_paid':1000.55,
+        'customer_from':datetime.date(2021,1,15),
+        'last_updated_is':datetime.datetime(2021,2,10,1,15,0)
+    },
+    {
+      'id' :2,
+        'first_name':'Vishal',
+        'last_name':'Barvaliya',
+        'email':'vishalbarvaliya@gmail.com',
+        'phone_no':Row(mobile='93427382623',home='93427382623') ,
+        'is_customer':True,
+        'amount_paid':900.55,
+        'customer_from':datetime.date(2021,2,14),
+        'last_updated_is':datetime.datetime(2021,2,18,4,33,0)
+    },
+    {
+      'id' :3,
+        'first_name':'Bhavik',
+        'last_name':'Gajera',
+        'email':'bhavikgajera@gmail.com',
+        'phone_no':Row(mobile=None,home=None),
+        'is_customer':False,
+        'amount_paid':None,
+        'customer_from':None,
+        'last_updated_is':datetime.datetime(2021,4,2,0,0,55,18)
+    }
+]
+
+# COMMAND ----------
+
+users_df=spark.createDataFrame([Row(**user) for user in users])
+
+# COMMAND ----------
+
+users_df.show()
+
+# COMMAND ----------
+
+  users_df.select('id','phone_no').show(truncate=False)
+
+# COMMAND ----------
+
+users_df.columns
+
+# COMMAND ----------
+
+users_df.dtypes
+
+# COMMAND ----------
+
+users_df.select('id','phone_no.mobile','phone_no.home').show()
+
+# COMMAND ----------
+
+users_df.select('id','phone_no.*').show()
+
+# COMMAND ----------
+
+users_df.select('id',col('phone_no')['mobile'],col('phone_no')['home']).show()
+
+# COMMAND ----------
+
 
