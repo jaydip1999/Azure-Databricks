@@ -172,4 +172,16 @@ spark.sql(""" select * from users where is_customer = True """).show()
 
 # COMMAND ----------
 
-spark.sql(""" select * from users where is_customer = 't """).show()
+spark.sql(""" select * from users where is_customer = 'true' """).show()
+
+# COMMAND ----------
+
+#fetching users from Toronto city
+
+# COMMAND ----------
+
+users_df.filter(col('city')=='Dallas').show()
+
+# COMMAND ----------
+
+users_df.filter('city=='Dallas'').show()
