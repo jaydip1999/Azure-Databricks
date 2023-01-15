@@ -190,7 +190,80 @@ users_groupby.count().withColumnRenamed('count','count_by_gender').show()
 
 # COMMAND ----------
 
+#get sum of all numeric columns
 users_groupby.sum().show()
+
+# COMMAND ----------
+
+users_grouped=users_df.select('gender','id','amount_paid').groupBy('gender')
+
+# COMMAND ----------
+
+help(users_grouped.sum)
+
+# COMMAND ----------
+
+users_grouped.sum().show()
+
+# COMMAND ----------
+
+ 
+users_grouped.sum('id','amount_paid').show()
+
+# COMMAND ----------
+
+users_grouped.sum('amount_paid').show()
+
+# COMMAND ----------
+
+#Renaming columns
+users_grouped.sum('id','amount_paid').toDF('category','customer_id','sum_of_amount_paid').show()
+
+# COMMAND ----------
+
+from pyspark.sql.functions import round
+
+# COMMAND ----------
+
+#Round to 0 numbers after '.'
+users_grouped.sum('id','amount_paid').toDF('category','customer_id','sum_of_amount_paid').withColumn('perfect_sum_of_amount_paid',round('sum_of_amount_paid',0)).show()
+
+# COMMAND ----------
+
+#Perform Grouped Aggregations using agg functions on a Spark Dataframe
+
+# COMMAND ----------
+
+users_grouped=users_df.groupBy('gender')
+
+# COMMAND ----------
+
+type(users_grouped)
+
+# COMMAND ----------
+
+users_grouped.sum('id','amount_paid').show()
+
+# COMMAND ----------
+
+help(users_grouped.agg)
+
+# COMMAND ----------
+
+users_grouped.agg(sum('id'),sum('amount_paid')).show()
+
+# COMMAND ----------
+
+users_grouped.agg(sum('id').alias('customer_id'),round(sum('amount_paid'),0).alias('perfect_amount_paid')).show()
+
+# COMMAND ----------
+
+#passing aggregate funs as a dictionary into agg function
+users_grouped.agg({'id':'sum','amount_paid':'sum'}).show()
+
+# COMMAND ----------
+
+users_grouped.agg({'id':'sum','amount_paid':'sum'}).toDF('category','sum_of_amount_paid','customer_id').withColumn('perfect_sum_of_amount_paid',round('sum_of_amount_paid',0)).show()
 
 # COMMAND ----------
 
