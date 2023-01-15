@@ -257,4 +257,16 @@ users_df.select('id','customer_from').orderBy(col('customer_from').desc_nulls_fi
 
 # COMMAND ----------
 
+users_df.show()
 
+# COMMAND ----------
+
+users_df.dtypes
+
+# COMMAND ----------
+
+ #sorting email in ascending order by first_name and then in ascending order by last_name
+
+# COMMAND ----------
+
+ #sorting email in ascending order by first_name and then in deqaqscending order by last_name
