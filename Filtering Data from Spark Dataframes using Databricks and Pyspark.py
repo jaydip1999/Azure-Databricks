@@ -338,4 +338,168 @@ from pyspark.sql.functions import col
 
 # COMMAND ----------
 
+users_df.select('id','city').filter((col('city') == '') | (col('city').isNull())).show()
+
+# COMMAND ----------
+
+users_df.select('id','city').filter("city  == '' or city is null").show()
+
+# COMMAND ----------
+
+#fetching list of users whose city is either Houston or Dallas 
+
+# COMMAND ----------
+
+users_df.select('id','city').filter((col('city') == 'Mississauga') | (col('city') == 'Toronto')).show()#not recommended for the condition on the same column. Use IN instead.
+
+# COMMAND ----------
+
+users_df.select('id','city').filter("city  == 'Mississauga' or city = 'Toronto'").show()#not recommended for the condition on the same column. Use IN instead.
+
+# COMMAND ----------
+
+users_df.select('id','city').filter(col('city').isin('Mississauga','Toronto')).show()
+
+# COMMAND ----------
+
+users_df.select('id','city').filter("city  in ('Mississauga','Toronto')").show()
+
+# COMMAND ----------
+
+#fetching list of users whose city is either Houston or Dallas or empty string. Use in Operator
+
+# COMMAND ----------
+
+users_df.select('id','city').filter(col('city').isin('Mississauga','Toronto','')).show()
+
+# COMMAND ----------
+
+users_df.select('id','city').filter("city  in ('Mississauga','Toronto','')").show()
+
+# COMMAND ----------
+
+#fetching list of users whose city is either Houston or Dallas or empty string or null.
+
+# COMMAND ----------
+
+users_df.select('id','city').filter((col('city').isin('Mississauga','Toronto','')) | (col('city').isNull())).show()
+
+# COMMAND ----------
+
+users_df.select('id','city').filter("city  in ('Mississauga','Toronto','') or city is null").show()
+
+# COMMAND ----------
+
+#Use of Greater Than and Less Than for Filtering
+
+# COMMAND ----------
+
+users_df.select('id','amount_paid').show()
+
+# COMMAND ----------
+
+users_df.select('id','amount_paid').filter(col('amount_paid')>900.55).show()
+
+# COMMAND ----------
+
+users_df.select('id','amount_paid').filter(col('amount_paid')<1000.55).show()
+
+# COMMAND ----------
+
+
+
+# COMMAND ----------
+
+users_df.select('id','amount_paid').filter((col('amount_paid')>900.55) & (isnan('amount_paid')==False)).show()
+
+# COMMAND ----------
+
+users_df.select('id','amount_paid').filter((col('amount_paid')<901) & (isnan('amount_paid')==False)).show()
+
+# COMMAND ----------
+
+users_df.select('id','amount_paid').filter((col('amount_paid')>=900.55) & (isnan('amount_paid')==False)).show()
+
+# COMMAND ----------
+
+users_df.select('id','amount_paid').filter((col('amount_paid')<=900.55) & (isnan('amount_paid')==False)).show()
+
+# COMMAND ----------
+
+#fetching users who became customers after 2021-01-21
+
+# COMMAND ----------
+
+users_df.select('id','customer_from').show()
+
+# COMMAND ----------
+
+users_df.select('id','customer_from').filter(col('customer_from')>'2021-01-21').show()
+
+# COMMAND ----------
+
+#Boolean And condition on Spark Dataframe 
+
+# COMMAND ----------
+
+#fetching male customers whose have condition is_customer is True
+
+# COMMAND ----------
+
+users_df.select('id','gender','is_customer').show()
+
+# COMMAND ----------
+
+users_df.show()
+
+# COMMAND ----------
+
+users_df.select('id','gender','is_customer').filter((col('gender')=='Male') & (col('is_customer')==True)).show()
+
+# COMMAND ----------
+
+#fetching the users who became consumers b/w 2021 jan 20th and 2021 feb 15th
+
+# COMMAND ----------
+
+ users_df.select('id','customer_from').show()
+
+# COMMAND ----------
+
+users_df.select('id','gender','is_customer','customer_from').filter((col('customer_from')>='2021-01-20') & (col('customer_from')<='2021-02-15')).show()  
+
+# COMMAND ----------
+
+#Boolean OR on different columns of Spark Dataframe
+
+# COMMAND ----------
+
+#fetching id and email of users who are not customers or city contain empty string
+
+# COMMAND ----------
+
+users_df.select('id','email','city','is_customer').show()
+
+# COMMAND ----------
+
+users_df.select('id','email','city','is_customer').filter((col('city')=='') | (col('is_customer')==False)).show()
+
+# COMMAND ----------
+
+users_df.select('id','email','city','is_customer').filter(" city='' or is_customer=False ").show()
+
+# COMMAND ----------
+
+#fetching ids and emails of users who are not customers or customers whose last updated time is before 2021-03-01
+
+# COMMAND ----------
+
+users_df.select('id','email','is_customer','last_updated_is').show()
+
+# COMMAND ----------
+
+users_df.select('id','email','is_customer','last_updated_is').filter((col('is_customer')==False) | (col('last_updated_is')<'2021-03-01')).show()
+
+# COMMAND ----------
+
 
