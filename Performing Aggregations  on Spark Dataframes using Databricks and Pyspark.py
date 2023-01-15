@@ -267,4 +267,21 @@ users_grouped.agg({'id':'sum','amount_paid':'sum'}).toDF('category','sum_of_amou
 
 # COMMAND ----------
 
+users_grouped.agg({'amount_paid':'sum','amount_paid':'min'}).show()
+
+# COMMAND ----------
+
+from pyspark.sql.functions import min 
+
+# COMMAND ----------
+
+users_grouped.agg(
+    sum('id').alias('customer_id'),
+    min('id').alias('min_customer_id'),
+    round(sum('amount_paid'),0).alias('perfect_amount_paid'),
+    min('amount_paid').alias('min_amount_paid')
+).show()
+
+# COMMAND ----------
+
 
