@@ -269,4 +269,32 @@ users_df.dtypes
 
 # COMMAND ----------
 
- #sorting email in ascending order by first_name and then in deqaqscending order by last_name
+users_df.sort('first_name','last_name').show()
+
+# COMMAND ----------
+
+ #sorting email in ascending order by first_name and then in descending order by last_name
+
+# COMMAND ----------
+
+users_df.sort(col('first_name'),col('last_name').desc()).show()
+
+# COMMAND ----------
+
+users_df.sort(['first_name','last_name'],ascending=[1,0]).show()
+
+# COMMAND ----------
+
+#Prioritized Sorting of a Spark Dataframe
+
+# COMMAND ----------
+
+from pyspark.sql.functions import col,when
+
+# COMMAND ----------
+
+help(when)
+
+# COMMAND ----------
+
+
