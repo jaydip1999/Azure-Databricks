@@ -274,7 +274,122 @@ users_df.join(course_enrolments_df,'user_id').show()
 
 # COMMAND ----------
 
-users_df.join(course_enrolments_df,users_df.user_id==course_enrolments_df['user_id'].select(users_df['*'],course_enrolments_df.course_id,course_enrolments_df['course_enrolment_id']).show()
+users_df.join(course_enrolments_df,users_df.user_id==course_enrolments_df['user_id']).select(users_df['*'],course_enrolments_df.course_id,course_enrolments_df['course_enrolment_id']).show()
+
+# COMMAND ----------
+
+#alias use
+
+
+# COMMAND ----------
+
+from pyspark.sql.functions import col
+
+# COMMAND ----------
+
+users_df.alias('u').join(course_enrolments_df.alias('ce'),col('u.user_id')==course_enrolments_df['user_id']).select('u.*',col('course_id'),col('course_enrolment_id')).show()
+
+# COMMAND ----------
+
+users_df.alias('u').join(course_enrolments_df.alias('ce'),users_df.user_id==course_enrolments_df.user_id).groupBy('user_id').count().show()  
+
+# COMMAND ----------
+
+users_df.alias('u').join(course_enrolments_df.alias('ce'),users_df.user_id==course_enrolments_df.user_id).groupBy('u.user_id').count().show()  
+
+# COMMAND ----------
+
+users_df.alias('u').join(course_enrolments_df.alias('ce'),'user_id').groupBy('u.user_id').count().show()  
+
+# COMMAND ----------
+
+#Outer Join
+
+# COMMAND ----------
+
+#fetching all the user details along with course enrolment details (if user have any course enrolments)
+#If any user does not have any course enrolments, we need to get all user details. Course details will be substituted with null values.
+# for this we are going to do left join between users_df and course_enrolments_df and display all fields from users_df and course_id and course_enrolment_id  from course_enrolments tables. 
+
+# COMMAND ----------
+
+users_df.join(course_enrolments_df,users_df.user_id==course_enrolments_df.user_id,'left').show()
+
+# COMMAND ----------
+
+users_df.join(course_enrolments_df,'user_id','left').show() #we can write left/leftouter/left_outer/
+
+# COMMAND ----------
+
+users_df.join(course_enrolments_df,'user_id','left').select(users_df['*'],course_enrolments_df['course_id'],course_enrolments_df['course_enrolment_id']).show()
+
+# COMMAND ----------
+
+#fetching the all user details who are not enrolled in any course.
+users_df.join(course_enrolments_df.alias('ce'),'user_id','left').filter('ce.course_enrolment_id is null').select(users_df['*'],course_enrolments_df['course_id'],course_enrolments_df['course_enrolment_id']).show()
+
+# COMMAND ----------
+
+#fetching no of courses enrolled by each user. If there are no enrolments, could them as '0'.
+users_df.alias('u').join(course_enrolments_df.alias('ce'),'user_id','outer').groupBy('u.user_id').count().orderBy('u.user_id').show()  
+
+# COMMAND ----------
+
+from pyspark.sql.functions import sum, when
+
+users_df.alias('u').join(course_enrolments_df.alias('ce'),'user_id','outer').groupBy('u.user_id').agg(sum(when(course_enrolments_df.course_enrolment_id.isNull(),0).otherwise(1)).alias('course_count')).orderBy('u.user_id').show()  
+
+#.count().show()   
+
+# COMMAND ----------
+
+from pyspark.sql.functions import expr
+
+# COMMAND ----------
+
+users_df.alias('u').join(course_enrolments_df.alias('ce'),'user_id','outer').groupBy('u.user_id').\
+agg(sum(expr('''
+                case when ce.course_enrolment_id is null then 0 else 1 end
+                ''')    
+).alias('course_count')).\
+orderBy('u.user_id').show()  
+
+
+# COMMAND ----------
+
+#Right Outer Join
+
+# COMMAND ----------
+
+course_enrolments_df.join(users_df,'user_id','right').show()
+
+# COMMAND ----------
+
+course_enrolments_df.join(users_df,users_df.user_id==course_enrolments_df.user_id,'right').show()
+
+# COMMAND ----------
+
+course_enrolments_df.show()
+
+# COMMAND ----------
+
+#FULL_OUTER_JOIN
+
+# COMMAND ----------
+
+course_enrolments_df.join(users_df,'user_id','FULL').show()
+
+# COMMAND ----------
+
+course_enrolments_df.join(users_df,'user_id','FULL').count()
+
+# COMMAND ----------
+
+course_enrolments_df.join(users_df,'user_id','left').union(course_enrolments_df.join(users_df,'user_id','right')).count()
+
+# COMMAND ----------
+
+course_enrolments_df.join(users_df,'user_id','left').union(course_enrolments_df.join(users_df,'user_id','right')).distinct().count()
 
 # COMMAND ----------
 
