@@ -270,7 +270,7 @@ users_df.join(course_enrolments_df,users_df.user_id==course_enrolments_df.user_i
 # COMMAND ----------
 
 #we can pass the common column between tables like this. In this case, that column is not repeated second time.
-users_df.join(course_enrolments_df,'user_id').show()
+users_df.join(course_enrolments_df,'user_id',how='inner').show()
 
 # COMMAND ----------
 
@@ -433,15 +433,36 @@ articles=spark.read.parquet('dbfs:/databricks-datasets/wikipedia-datasets/data-0
 
 # COMMAND ----------
 
-
-
-# COMMAND ----------
-
-
+from pyspark.sql.functions import broadcast
 
 # COMMAND ----------
 
+#we can use broadcast function to override existing broadcast join threshold
+# we can also override by using this code spark.conf.set('spark.sql.autoBroadcastJoinThreshold','1500m')
 
+# COMMAND ----------
+
+broadcast(stream).join(articles,articles.id==stream.curr_id).count()
+
+# COMMAND ----------
+
+#cross join
+
+# COMMAND ----------
+
+help(courses_df.join)
+
+# COMMAND ----------
+
+users_df.crossJoin(courses_df).show()
+
+# COMMAND ----------
+
+users_df.join(courses_df).show()
+
+# COMMAND ----------
+
+users_df.join(courses_df,how='cross').show()
 
 # COMMAND ----------
 
