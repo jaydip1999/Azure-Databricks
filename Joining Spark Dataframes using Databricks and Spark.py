@@ -397,31 +397,39 @@ course_enrolments_df.join(users_df,'user_id','left').union(course_enrolments_df.
 
 # COMMAND ----------
 
+#by default size is 10mb
 spark.conf.get('spark.sql.autoBroadcastJoinThreshold')
 
 # COMMAND ----------
 
+#desabling broadcast join 
 spark.conf.set('spark.sql.autoBroadcastJoinThreshold','0')
 
 # COMMAND ----------
 
+#resetting to original value
 spark.conf.set('spark.sql.autoBroadcastJoinThreshold','10485760b')
 
 # COMMAND ----------
 
-stream=spark.read.csv('',sep='\t',header=True)
+#around 1.2 gb data
+stream=spark.read.csv('dbfs:/databricks-datasets/wikipedia-datasets/data-001/clickstream/raw-compressed/',sep='\t',header=True)
 
 # COMMAND ----------
 
-
-
-# COMMAND ----------
-
-
+#more than 10 gb data
+articles=spark.read.parquet('dbfs:/databricks-datasets/wikipedia-datasets/data-001/en_wikipedia/articles-only-parquet/')
 
 # COMMAND ----------
 
+# MAGIC %%time
+# MAGIC 
+# MAGIC #reduce side join is performed as the size of smaller datasets is more than 10mb which is original broadcast size.
+# MAGIC stream.join(articles,articles.id==stream.curr_id).count()
 
+# COMMAND ----------
+
+#reviewing sql plan visulization to confirm the previous query have sort merge join.
 
 # COMMAND ----------
 
