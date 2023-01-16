@@ -393,4 +393,48 @@ course_enrolments_df.join(users_df,'user_id','left').union(course_enrolments_df.
 
 # COMMAND ----------
 
+#Overview of Broadcast Join
+
+# COMMAND ----------
+
+spark.conf.get('spark.sql.autoBroadcastJoinThreshold')
+
+# COMMAND ----------
+
+spark.conf.set('spark.sql.autoBroadcastJoinThreshold','0')
+
+# COMMAND ----------
+
+spark.conf.set('spark.sql.autoBroadcastJoinThreshold','10485760b')
+
+# COMMAND ----------
+
+stream=spark.read.csv('',sep='\t',header=True)
+
+# COMMAND ----------
+
+
+
+# COMMAND ----------
+
+
+
+# COMMAND ----------
+
+
+
+# COMMAND ----------
+
+
+
+# COMMAND ----------
+
+
+
+# COMMAND ----------
+
+
+
+# COMMAND ----------
+
 
