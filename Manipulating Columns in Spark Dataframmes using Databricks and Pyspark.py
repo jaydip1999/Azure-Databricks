@@ -308,4 +308,334 @@ new_sample.show(truncate=False)
 
 # COMMAND ----------
 
+#Trimming
+
+# COMMAND ----------
+
+l1=[('   a.  ',)]
+df=spark.createDataFrame(l1,'dummy string')
+
+# COMMAND ----------
+
+df.show()
+
+# COMMAND ----------
+
+from pyspark.sql.functions import ltrim,rtrim,trim
+
+# COMMAND ----------
+
+help(trim)
+
+# COMMAND ----------
+
+help(ltrim)
+
+# COMMAND ----------
+
+help(rtrim)
+
+# COMMAND ----------
+
+df.withColumn('ltrim',ltrim(col('dummy'))).withColumn('rtrim',rtrim(col('dummy'))).withColumn('trim',trim(col('dummy'))).show()
+
+# COMMAND ----------
+
+spark.sql('describe function rtrim').show(truncate=False)
+
+# COMMAND ----------
+
+from pyspark.sql.functions import expr
+
+# COMMAND ----------
+
+df.withColumn('ltrim',expr("ltrim(dummy)")).\
+withColumn('rtrim',expr("rtrim('.',rtrim(dummy))")).withColumn('trim',trim(col('dummy'))).show()
+
+# COMMAND ----------
+
+spark.sql('describe function trim').show(truncate=False)
+
+# COMMAND ----------
+
+df.withColumn('ltrim',expr("trim(lEADING ' ' FROM dummy)")).\
+withColumn('rtrim',expr("trim(TRAILING '.' FROM rtrim(dummy))")).withColumn('trim',expr("trim(BOTH ' ' FROM dummy )")).show()
+
+# COMMAND ----------
+
+#Date and Time Manipulation Functions
+
+# COMMAND ----------
+
+from pyspark.sql.functions import current_date,current_timestamp,to_date,to_timestamp
+
+# COMMAND ----------
+
+help(current_date)
+
+# COMMAND ----------
+
+df.select(current_date()).show()#yyyy-MM-dd
+
+# COMMAND ----------
+
+df.select(current_timestamp()).show(truncate=False)#yyyy-MM-dd HH:mm:ss.SSS
+
+# COMMAND ----------
+
+help(to_date)
+
+# COMMAND ----------
+
+df.select(to_date(lit('20220229'),'yyyymmdd').alias('to_date')).show()#converting non-standard date format to standard date format
+
+# COMMAND ----------
+
+df.select(to_timestamp(lit('20220229 1725'),'yyyyMMdd HHmm').alias('to_timestamp')).show() #converting non-standard datetime format to standard datetime format
+
+# COMMAND ----------
+
+#Date and Time Arithmetic using Spark Dataframes
+
+# COMMAND ----------
+
+datetimes=[('2014-02-28','2014-02-28 10:00:00.123'),('2016-02-29','2016-02-29 08:08:08.999'),('2017-10-31','2017-10-31 11:59:59.123')]
+
+# COMMAND ----------
+
+dtdf=spark.createDataFrame(datetimes,schema='date string ,time string')
+
+# COMMAND ----------
+
+dtdf.show(truncate=False)
+
+# COMMAND ----------
+
+from pyspark.sql.functions import date_add,date_sub
+
+# COMMAND ----------
+
+
+help(date_add)
+
+# COMMAND ----------
+
+help(date_sub)
+
+# COMMAND ----------
+
+#add 10 days and subtract 10 days to both date and time values
+
+# COMMAND ----------
+
+dtdf.withColumn('date_add_date',date_add('date',10)).withColumn('date_add_time',date_add('time',10)).withColumn('date_sub_date',date_sub('date',10)).withColumn('date_sub_time',date_sub('time',10)).show()
+
+# COMMAND ----------
+
+#calculating difference current_date and date values as well as current_timestamp and time values.
+
+# COMMAND ----------
+
+from pyspark.sql.functions import datediff,current_date,current_timestamp
+
+# COMMAND ----------
+
+help(datediff)
+
+# COMMAND ----------
+
+dtdf.withColumn('datediff_date',datediff(current_date(),'date')).withColumn('datediff_time',datediff(current_timestamp(),'time')).show()
+
+# COMMAND ----------
+
+#get the no of months between current_date and date values as well as current_timestamp and time values.
+#add 3 months to both datevalue as well as time values
+
+# COMMAND ----------
+
+from pyspark.sql.functions import months_between,add_months,round
+
+# COMMAND ----------
+
+help(months_between)
+
+# COMMAND ----------
+
+help(add_months)
+
+# COMMAND ----------
+
+dtdf.show(truncate=False)
+
+# COMMAND ----------
+
+dtdf.withColumn('months_between_date',round(months_between(current_date(),'date'),2)).withColumn('months_between_time',round(months_between(current_timestamp(),'time'),2)).withColumn('add_month_date',add_months('date',3)).withColumn('add_month_time',add_months('time',3)).show(truncate=False)
+
+# COMMAND ----------
+
+#Date and TIme Trunc Functions
+
+# COMMAND ----------
+
+from pyspark.sql.functions import trunc,date_trunc
+
+# COMMAND ----------
+
+help(trunc)
+
+# COMMAND ----------
+
+help(date_trunc)
+
+# COMMAND ----------
+
+dtdf.show(truncate=False)
+
+# COMMAND ----------
+
+dtdf.withColumn('date_trunc',trunc('date','MM')).withColumn('time_trunc',trunc('time','yy')).show(truncate=False)
+
+# COMMAND ----------
+
+#fetching beginning hour time using date and time field
+
+
+# COMMAND ----------
+
+from pyspark.sql.functions import date_trunc 
+
+# COMMAND ----------
+
+help(date_trunc)
+
+# COMMAND ----------
+
+dtdf.withColumn('date_trunc',date_trunc('MM','date')).withColumn('time_trunc',date_trunc('yy','time')).show(truncate=False)
+
+# COMMAND ----------
+
+dtdf.withColumn('date_dt',date_trunc('HOUR','date')).withColumn('time_dt',date_trunc('HOUR','time')).withColumn('time_dt1',date_trunc('dd','time')).show(truncate=False)
+
+# COMMAND ----------
+
+#Date and Time Extract Functions
+
+# COMMAND ----------
+
+df.show()
+
+# COMMAND ----------
+
+df.show()
+
+# COMMAND ----------
+
+from pyspark.sql.functions import year,month,weekofyear,dayofmonth,dayofyear,dayofweek,current_date
+
+# COMMAND ----------
+
+help(year)
+
+# COMMAND ----------
+
+df.select(current_date().alias('current-date'),year(current_date()).alias('year'),month(current_date()).alias('month'),weekofyear(current_date()).alias('weekofyear'),dayofyear(current_date()).alias('dayofyear'),dayofmonth(current_date()).alias('dayofmonth'),dayofweek(current_date()).alias('dayofweek')).show()
+
+# COMMAND ----------
+
+from pyspark.sql import functions as F
+
+# COMMAND ----------
+
+help(F.current_timestamp)
+
+# COMMAND ----------
+
+df.select(F.current_timestamp().alias('current-timestamp'),F.year(F.current_timestamp()).alias('year'),F.month(F.current_timestamp()).alias('month'),F.dayofmonth(F.current_timestamp()).alias('dayofmonth'),F.hour(F.current_timestamp()).alias('hour'),F.minute(F.current_timestamp()).alias('minute'),F.second(F.current_timestamp()).alias('second')).show()
+
+# COMMAND ----------
+
+#Usage of to_date and to_timestamp
+
+# COMMAND ----------
+
+from pyspark.sql.functions import to_date,to_timestamp,lit
+
+# COMMAND ----------
+
+datetimes=[(20140228,'28-Feb-2014 10:00:00.123'),(20160229,'20-Feb-2016 08:08:08.999'),(20171031,'31-Dec-2017 11:59:59.123')]
+
+# COMMAND ----------
+
+dtdf=spark.createDataFrame(datetimes,schema='date bigint, time string')
+
+# COMMAND ----------
+
+dtdf.show(truncate=False)
+
+# COMMAND ----------
+
+df.show()
+
+# COMMAND ----------
+
+help(to_date)
+
+# COMMAND ----------
+
+df.select(to_date(lit('20210302'),'yyyyMMdd').alias('to_date')).show()
+
+# COMMAND ----------
+
+df.select(to_date(lit('20210302'),'yyyyddMM').alias('to_date')).show()
+
+# COMMAND ----------
+
+df.select(to_date(lit('2021002'),'yyyyDDD').alias('to_date')).show()
+
+# COMMAND ----------
+
+df.select(to_date(lit('02/03/3021'),'dd/MM/yyyy').alias('to_date')).show()
+
+# COMMAND ----------
+
+df.select(to_date(lit('02-03-3021'),'dd-MM-yyyy').alias('to_date')).show()
+
+# COMMAND ----------
+
+df.select(to_date(lit('02-Mar-3021'),'dd-MMM-yyyy').alias('to_date')).show()
+
+# COMMAND ----------
+
+df.select(to_date(lit('02-March-2021'),'dd-MMMM-yyyy').alias('to_date')).show()
+
+# COMMAND ----------
+
+df.select(to_date(lit('March 2,2021'),'MMMM d,yyyy').alias('to_date')).show()
+
+# COMMAND ----------
+
+
+
+# COMMAND ----------
+
+df.select(to_timestamp(lit('20210302'),'yyyyMMdd').alias('to_timestamp')).show()
+
+# COMMAND ----------
+
+df.select(to_timestamp(lit('20210302 17:20:15'),'yyyyMMdd HH:mm:ss').alias('to_timestamp')).show()
+
+# COMMAND ----------
+
+#converting data in datetimes to standard dates or timestamp
+
+# COMMAND ----------
+
+dtdf.printSchema()
+
+# COMMAND ----------
+
+ dtdf.withColumn('to_date',to_date(col('date').cast('string'),'yyyyMMdd')).withColumn('to_timestamp',to_timestamp(col('time'),'dd-MMM-yyyy HH:mm:ss.SSS')).show(truncate=False)
+
+# COMMAND ----------
+
 
