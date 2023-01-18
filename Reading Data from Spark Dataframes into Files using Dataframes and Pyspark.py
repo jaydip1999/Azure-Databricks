@@ -148,15 +148,118 @@ type(spark.read)
 
 # COMMAND ----------
 
+#Reading Data from CSV files into Spark Dataframe
+
+# COMMAND ----------
+
+sample = spark.read.format("csv").option("header", "true").load("dbfs:/FileStore/shared_uploads/c0851929@mylambton.ca/sample_data.csv")
 
 
 # COMMAND ----------
 
+sample.columns
+
+# COMMAND ----------
+
+sample.dtypes
+
+# COMMAND ----------
+
+#Specifying Schema 
+
+# COMMAND ----------
+
+help(spark.read.schema)
+
+# COMMAND ----------
+
+help(spark.read.csv)
+
+# COMMAND ----------
+
+help(spark.read.format('csv').load)
+
+# COMMAND ----------
+
+schema='''ID int, NAME string, GENDER string, AGE int, DATE string, COUNTRY string'''
 
 
 # COMMAND ----------
 
+sample = spark.read.format("csv").option("header", "true").load("dbfs:/FileStore/shared_uploads/c0851929@mylambton.ca/sample_data.csv",schema=schema)
 
+
+# COMMAND ----------
+
+sample.show()
+
+# COMMAND ----------
+
+sample=spark.read.csv("dbfs:/FileStore/shared_uploads/c0851929@mylambton.ca/sample_data.csv",schema=schema)
+
+# COMMAND ----------
+
+sample.show()
+
+# COMMAND ----------
+
+from pyspark.sql.types import StructType,StructField,IntegerType,TimestampType,StringType
+
+# COMMAND ----------
+
+help(StructField)
+
+# COMMAND ----------
+
+schema=StructType([
+    StructField('ID',IntegerType()),
+    StructField('NAME',StringType()),
+    StructField('GENDER',StringType()),
+    StructField('AGE',IntegerType()),
+    StructField('DATE',StringType()),
+    StructField('COUNTRY',StringType()),
+])
+
+
+# COMMAND ----------
+
+type(schema)
+
+# COMMAND ----------
+
+sample=spark.read.schema(schema).csv('dbfs:/FileStore/shared_uploads/c0851929@mylambton.ca/sample_data.csv',header=True)
+
+# COMMAND ----------
+
+sample.show()
+
+# COMMAND ----------
+
+#Useage of toDF and inferSchema using  CSV  to create Spark Dataframe
+
+# COMMAND ----------
+
+columns=['id', 'name', 'gender', 'age', 'date', 'country']
+
+# COMMAND ----------
+
+type(columns)
+
+# COMMAND ----------
+
+spark.read.option('inferSchema',True).csv('dbfs:/FileStore/shared_uploads/c0851929@mylambton.ca/sample_data.csv').toDF(*columns)
+
+# COMMAND ----------
+
+spark.read.option('inferSchema',True).csv('dbfs:/FileStore/shared_uploads/c0851929@mylambton.ca/sample_data.csv').toDF(*columns).dtypes
+
+# COMMAND ----------
+
+sample=spark.read.schema(schema).csv('dbfs:/FileStore/shared_uploads/c0851929@mylambton.ca/sample_data.csv',header=True).toDF(*columns)
+
+# COMMAND ----------
+
+sample.dtypes
 
 # COMMAND ----------
 
