@@ -638,4 +638,169 @@ dtdf.printSchema()
 
 # COMMAND ----------
 
+#Usage of date_format function
+
+# COMMAND ----------
+
+datetimes=[('2014-02-28','2014-02-28 10:00:00.123'),('2016-02-29','2016-02-29 08:08:08.999'),('2017-10-31','2017-10-31 11:59:59.123')]
+
+# COMMAND ----------
+
+dtdf=spark.createDataFrame(datetimes,schema='date string ,time string')
+
+# COMMAND ----------
+
+dtdf.show(truncate=False)
+
+# COMMAND ----------
+
+from pyspark.sql.functions import date_format
+
+# COMMAND ----------
+
+help(date_format)
+
+# COMMAND ----------
+
+#getting the year and the month from both date and time columns using yyyyMM format. Also ensure that the data type is converted to integer.
+
+# COMMAND ----------
+
+dtdf.withColumn('date_ym',date_format('date','yyyyMM')).withColumn('time_ym',date_format('time','yyyyMM')).show(truncate=False)
+
+# COMMAND ----------
+
+dtdf.withColumn('date_ym',date_format('date','yyyyMM').cast('int')).withColumn('time_ym',date_format('time','yyyyMM').cast('int')).show(truncate=False)
+
+# COMMAND ----------
+
+dtdf.withColumn('date_ym',date_format('date','yyyyMM').cast('int')).withColumn('time_ym',date_format('time','yyyyMM').cast('int')).printSchema()
+
+# COMMAND ----------
+
+#fetching the data in yyyyMMddHHmmss format
+
+# COMMAND ----------
+
+dtdf.withColumn('date_ym',date_format('date','yyyyMMddHHmmss')).withColumn('time_ym',date_format('time','yyyyMMddHHmmss')).show(truncate=False)
+
+# COMMAND ----------
+
+dtdf.withColumn('date_ym',date_format('date','yyyyMMddHHmmss').cast('long')).withColumn('time_ym',date_format('time','yyyyMMddHHmmss').cast('long')).show(truncate=False)
+
+# COMMAND ----------
+
+#fetching year and day of year using yyyyDD format.
+
+# COMMAND ----------
+
+dtdf.withColumn('date_ym',date_format('date','yyyyDDD').cast('int')).withColumn('time_ym',date_format('time','yyyyDDD').cast('int')).show()
+
+# COMMAND ----------
+
+#fetching complete description of the DATE
+
+# COMMAND ----------
+
+dtdf.withColumn('date_desc',date_format('date','MMMM d, yyyy')).show(truncate=False)
+
+# COMMAND ----------
+
+#getting the name of the week day using date.
+
+# COMMAND ----------
+
+dtdf.withColumn('day_name_abbr',date_format('date','EE')).show(truncate=False)
+
+# COMMAND ----------
+
+dtdf.withColumn('day_name_abbr',date_format('date','EEEE')).show(truncate=False)
+
+# COMMAND ----------
+
+#Dealing with Unix Timestamp
+
+# COMMAND ----------
+
+datetimes=[(20140228,'2014-02-28', '2014-02-28 10:00:00'),
+ (20160229,'2016-02-29', '2016-02-29 08:08:08'),
+ (20171031,'2017-10-31', '2017-10-31 11:59:59')]
+
+# COMMAND ----------
+
+ dtdf=spark.createDataFrame(datetimes,schema='dateid bigint, date string ,time string')
+
+# COMMAND ----------
+
+dtdf.show()
+
+# COMMAND ----------
+
+from pyspark.sql.functions import unix_timestamp
+
+# COMMAND ----------
+
+help(unix_timestamp)
+
+# COMMAND ----------
+
+ dtdf\
+       .withColumn('unix_date_id',unix_timestamp(col('dateid').cast('string'),'yyyyMMdd'))\
+       .withColumn('unix_date',unix_timestamp(col('date'),'yyyy-MM-dd'))\
+    .withColumn('unix_time',unix_timestamp('time')).show(truncate=False)
+
+# COMMAND ----------
+
+#converting unixtimestamp to date time format back
+
+# COMMAND ----------
+
+unixtimes=[(1393581600,),(1456733288,),(1509451199,)]
+
+# COMMAND ----------
+
+ utdf=spark.createDataFrame(unixtimes).toDF('unixtime')
+
+# COMMAND ----------
+
+utdf.show()
+
+# COMMAND ----------
+
+utdf.printSchema()
+
+# COMMAND ----------
+
+#getting date in yyyyMMdd format and also complete timestamp
+
+# COMMAND ----------
+
+from pyspark.sql.functions import from_unixtime,col
+
+# COMMAND ----------
+
+help(from_unixtime)
+
+# COMMAND ----------
+
+utdf.withColumn('date',from_unixtime('unixtime','yyyyMMdd')).withColumn('time',from_unixtime('unixtime')).show()
+
+# COMMAND ----------
+
+help(col('unixtime').cast)
+
+# COMMAND ----------
+
+utdf.select(col('unixtime').cast('date')).show()
+
+# COMMAND ----------
+
+utdf.select(col('unixtime').cast('timestamp')).show()
+
+# COMMAND ----------
+
+
+
+# COMMAND ----------
+
 
