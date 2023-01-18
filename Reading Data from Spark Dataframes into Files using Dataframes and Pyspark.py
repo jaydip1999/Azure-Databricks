@@ -15,7 +15,7 @@ schema='''order_id int, order_date timestamp, order_customer_id int, order_statu
 
 # COMMAND ----------
 
-orders-spark.read.schema(schema).csv('/public/retail_db/orders')
+orders= spark.read.schema(schema).csv('/public/retail_db/orders')
 
 # COMMAND ----------
 
@@ -260,6 +260,14 @@ sample=spark.read.schema(schema).csv('dbfs:/FileStore/shared_uploads/c0851929@my
 # COMMAND ----------
 
 sample.dtypes
+
+# COMMAND ----------
+
+sample.inputFiles()
+
+# COMMAND ----------
+
+#Reading JSON files
 
 # COMMAND ----------
 
