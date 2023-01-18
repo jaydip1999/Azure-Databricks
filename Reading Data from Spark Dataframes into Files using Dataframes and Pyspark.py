@@ -267,7 +267,7 @@ sample.inputFiles()
 
 # COMMAND ----------
 
-#Reading JSON files
+
 
 # COMMAND ----------
 
