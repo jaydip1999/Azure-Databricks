@@ -69,11 +69,31 @@ sample.filter(dc('date')==20160521).show()
 
 # COMMAND ----------
 
-sample.groupBy(dc('date')).count().show()
+sample.groupBy(dc('date').alias('date')).count().show()
 
 # COMMAND ----------
 
 #Using Spark UDFs as part of Spark SQL
+
+# COMMAND ----------
+
+sample.selectExpr('new_date(date) as  date').show()
+
+# COMMAND ----------
+
+sample.createOrReplaceTempView('sample')
+
+# COMMAND ----------
+
+spark.sql('''select sample.*,new_date(date) as new_date from sample''').show()
+
+# COMMAND ----------
+
+spark.sql('''select sample.*,new_date(date) as new_date from sample where new_date(date)=20201015 ''').show()
+
+# COMMAND ----------
+
+spark.sql('''select new_date(date) as new_date,count(*) as count from sample group by  new_date(date)''').show()
 
 # COMMAND ----------
 
